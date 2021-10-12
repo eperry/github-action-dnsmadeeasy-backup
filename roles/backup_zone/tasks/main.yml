@@ -1,0 +1,25 @@
+- file:
+    path: "{{ playbook_dir }}/zones/"
+    state: directory
+
+- name: "Query DME {{ inventory_hostname }}" 
+  dnsmadeeasy:
+    account_key: "{{ DNSMADEEASY_APIKEY }}"
+    account_secret: "{{ DNSMADEEASY_SECRET }}"
+    domain: "{{ inventory_hostname }}"
+    state: present
+  register: response
+  until: response is not failed
+  retries: 20
+  delay: "{{ 120 | random( start=30, step=30 ) }}"
+
+- file:
+    path: "{{ playbook_dir }}/zones/{{ inventory_hostname }}"
+    state: directory
+  when: not response.failed
+
+- name: "write to file zones/{{ inventory_hostname }}/main.yml"
+  template:
+    dest: "{{ playbook_dir }}/zones/{{ inventory_hostname }}/main.yml"
+    src:  query_to_config.yml.j2
+  when: not response.failed
