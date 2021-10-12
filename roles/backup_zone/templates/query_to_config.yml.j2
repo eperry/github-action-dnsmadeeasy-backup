@@ -1,0 +1,11 @@
+zone_{{ inventory_hostname  | regex_replace('\\.', '_') }}
+{% for entry in response.result | sort (attribute='id')  %}{# Loop though all items returned from DNSME Query #}
+{%     for key in entry | sort %}{# Loop over the members of the object #}
+{%     if loop.first %}  - {%else%}    {%endif%}{# format json in jaml #}
+{%     if key in entry %}
+{{key}}:{% if key == "name" and not entry.name |length %} @{%else%} {{ entry[key] }}{%endif%} 
+{%else%}
+{{key}} not found
+{% endif %}{# if item[key] exists #}
+{% endfor %}{# End key loop #}
+{% endfor %}{# end Item loop#}
