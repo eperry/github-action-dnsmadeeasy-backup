@@ -1,0 +1,47 @@
+name: Backup domains
+
+on:
+  workflow_dispatch:
+  # Scheduled for 1am EST (GITHUB works in GMT)
+  schedule:
+    - cron:  '45 6 * * 0'
+
+jobs:
+  backup-DMSME:
+    name: backup-DNSME
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      # pause between each run as DNS Made Easy has a Transaction limit per minute and we have lots of domains
+      - run: |
+          ansible-playbook DME_export.yml --diff  -e DNSMADEEASY_APIKEY=${{ secrets.DNSMADEEASY_APIKEY }} -e DNSMADEEASY_SECRET=${{secrets.DNSMADEEASY_SECRET }} -l priority
+      - run: |
+          date > zone_imported_time.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add zones zone_imported_time.txt
+          git commit -m "latest DNSME snapshot"
+          git push
+      - name: Notify Slack
+        if: success()
+        #https://github.com/marketplace/actions/slack-notify
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_COLOR: '#3278BD'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 'DNSMadeEasy Domains have been backed up by action'
+          SLACK_TITLE: Github Action - DNSME Backup
+          SLACK_USERNAME: githubAction
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      - name: Notify Slack
+        if: failure()
+        #https://github.com/marketplace/actions/slack-notify
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_COLOR: '#3278BD'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 'FAILURE!!!!! DNSMadeEasy Domains have failed to back up action '
+          SLACK_TITLE: Github Action - DNSME Backup
+          SLACK_USERNAME: githubAction
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
