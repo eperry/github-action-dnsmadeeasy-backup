@@ -1,0 +1,6 @@
+[priority]
+example.com
+otherdomain.com
+
+[otherdomains]
+my.example.com
