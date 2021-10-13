@@ -13,11 +13,10 @@ ansible-playbook DME_export.yml --diff  -e DNSMADEEASY_APIKEY=<<<DNSMADEEASY_API
 * Edit the inventory/hosts file to replace the domains with your specific domain
 * Copy the the file to the workflows directory, commit and push it
 ``` 
-  
-  cp github-action-backup.yml .github/workflows/
-  
+cp github-action-backup.yml .github/workflows/
 ```
-  ***You might want to edit the file to change when the crontab kicks off.
+
+  You might want to edit the file to change when the crontab kicks off.
 * git add .github/workflows
 * git commit -am 'Activate'
 * git push the code update
