@@ -8,7 +8,7 @@ ansible-playbook DME_export.yml --diff  -e DNSMADEEASY_APIKEY=<<<DNSMADEEASY_API
 ```
 
 
-## To Activate
+## To Activate as a workflow
 * Fork this repo to your own copy
 * Edit the inventory/hosts file to replace the domains with your specific domain
 * Copy the the file to the workflows directory, commit and push it
