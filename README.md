@@ -1,7 +1,10 @@
 # DNS Made Easy - DNS Backup
 
 This project uses Ansible to create a backup of DNS Madeeasy using the dnsmadeeasy.py. 
+
 It was designed to run from an GITHUB Workflow but can easly run manually using the ansible playbook.
+
+This project requires Python3
 
 ```
 ansible-playbook DME_export.yml --diff  -e DNSMADEEASY_APIKEY=<<<DNSMADEEASY_APIKEY>>> -e DNSMADEEASY_SECRET=<<<DNSMADEEASY_SECRET>>> -l priorty
